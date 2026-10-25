@@ -121,35 +121,35 @@ Captured from the running application with isolated test data; the screenshots d
 
 ### Login
 
-![Login page](screenshots/login_page.png)
+[![Login page](screenshots/login_page.png)](screenshots/login_page.png)
 
 ### Customer showroom
 
-![Customer showroom](screenshots/user_UI.png)
+[![Customer showroom](screenshots/user_UI.png)](screenshots/user_UI.png)
 
-![Expanded vehicle details](screenshots/expanded_view.png)
+[![Expanded vehicle details](screenshots/expanded_view.png)](screenshots/expanded_view.png)
 
 ### Search and collection controls
 
-![Search filter](screenshots/serach_filter.png)
+[![Search filter](screenshots/serach_filter.png)](screenshots/serach_filter.png)
 
-![In-stock filter](screenshots/in-stock-view.png)
+[![In-stock filter](screenshots/in-stock-view.png)](screenshots/in-stock-view.png)
 
-![Price low to high](screenshots/price_low-tohigh.png)
+[![Price low to high](screenshots/price_low-tohigh.png)](screenshots/price_low-tohigh.png)
 
-![Price high to low](screenshots/price_high-to-low.png)
+[![Price high to low](screenshots/price_high-to-low.png)](screenshots/price_high-to-low.png)
 
 ### Admin inventory
 
-![Admin inventory](screenshots/admin.png)
+[![Admin inventory](screenshots/admin.png)](screenshots/admin.png)
 
-![Admin inventory view](screenshots/admin2.png)
+[![Admin inventory view](screenshots/admin2.png)](screenshots/admin2.png)
 
-![Admin inventory management](screenshots/admin3.png)
+[![Admin inventory management](screenshots/admin3.png)](screenshots/admin3.png)
 
-![Admin inventory controls](screenshots/admin4.png)
+[![Admin inventory controls](screenshots/admin4.png)](screenshots/admin4.png)
 
-![Additional customer showroom view](screenshots/User_UI_two.png)
+[![Additional customer showroom view](screenshots/User_UI_two.png)](screenshots/User_UI_two.png)
 
 ## Contributors and AI assistance
 
