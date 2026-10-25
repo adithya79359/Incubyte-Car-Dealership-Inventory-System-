@@ -5,3 +5,5 @@ data/
 *.log
 .npm-cache/
 .postgres-test/
+test-results/
+playwright-report/

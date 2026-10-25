@@ -87,4 +87,20 @@ Roles are read from PostgreSQL on every authenticated request, so role changes a
 
 The 11 integration tests cover authentication, vehicle CRUD and validation, combined search filters, authorization, quantity validation, stock overflow, concurrent purchasing, concurrent restocking, and role changes. Run `npm test` with a configured PostgreSQL test database. The frontend production build is checked with `npm run build`.
 
-The frontend currently contains registration/login only; vehicle and admin pages are not part of these API phases.
+## Frontend (Phases 7–10)
+
+After registration or login, users enter a responsive vehicle dashboard. Search by make, model, category, and price; clear filters to return to the collection. Cards show price in INR and current stock. Purchase opens a quantity confirmation, updates stock through the API, and refreshes results. Sold-out purchases are disabled. This inventory operation does not collect payment.
+
+Administrators also see **Manage inventory**, with add, edit, restock, and delete controls. Deletion requires confirmation. Grant the administrator role using the SQL above, then sign in again to refresh the frontend role. Backend permissions are always checked against the database.
+
+The interface includes loading, empty, success, error, and retry states; keyboard-accessible native dialogs; labelled inputs; and mobile layouts. Vehicle artwork is explicitly labelled as an illustration. JWTs remain in memory and expire after one hour; a 401 response returns the user to login. Refreshing the page clears the session. Sign-out clears the client token but does not revoke issued tokens server-side.
+
+The server sends anti-framing, content-type, referrer, and browser-permission headers. In production it also sends a same-origin Content Security Policy. Serve production over HTTPS. Vehicle create/update endpoints retain the authenticated-user permissions specified in the API brief; their controls appear only in the admin UI. Delete and restock are admin-only on the server.
+
+### Browser integration tests
+
+```sh
+npm run test:browser
+```
+
+Requires Microsoft Edge and `TEST_DATABASE_URL` in `.env` or the environment. The suite builds the frontend, starts a production-mode test server on port 3101, and uses a separate randomly named PostgreSQL schema with test-only accounts. Four browser tests exercise registration, login, search, purchase, sold-out state, admin CRUD/restock, delete cancellation, mobile layouts, server security headers, network-error recovery, session expiry, and sign-out. Screenshots and failure traces are saved under ignored `test-results/`.

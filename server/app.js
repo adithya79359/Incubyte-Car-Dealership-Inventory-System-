@@ -14,6 +14,13 @@ export async function createApp({ db, secret }) {
   const app = express();
   await initializeVehicles(db);
   app.disable('x-powered-by');
+  app.use((_req, res, next) => {
+    res.set({ 'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer', 'Permissions-Policy': 'camera=(), microphone=(), geolocation=()' });
+    if (process.env.NODE_ENV === 'production') {
+      res.set('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'");
+    }
+    next();
+  });
   app.use(express.json({ limit: '8kb' }));
   app.use('/api', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 

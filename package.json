@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "concurrently -k \"node --env-file-if-exists=.env --watch server/index.js\" \"vite --host 127.0.0.1\"",
     "build": "vite build",
+    "test:browser": "npm run build && node --env-file-if-exists=.env node_modules/@playwright/test/cli.js test",
     "start": "node --env-file-if-exists=.env server/index.js",
     "test": "node --env-file-if-exists=.env --test server/*.test.js"
   },
@@ -17,6 +18,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.1.0",
     "@vitejs/plugin-react": "^4.5.0",
     "concurrently": "^9.1.0",

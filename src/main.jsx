@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import Dashboard from './Dashboard';
 
 function App() {
   const [mode, setMode] = useState('login');
@@ -27,6 +28,8 @@ function App() {
       setError(failure instanceof TypeError ? 'Unable to connect. Check your connection and try again.' : failure.message);
     } finally { setBusy(false); }
   }
+  const signOut = useCallback((message = '') => { setSession(null); setMode('login'); setError(message); }, []);
+  if (session) return <Dashboard session={session} onSignOut={signOut} />;
   return <main className="min-h-screen grid lg:grid-cols-2">
     <section className="story flex flex-col justify-between relative overflow-hidden p-8 md:p-14 lg:p-16" aria-label="Welcome to Motorlane">
       <a className="brand relative z-10" href="/" aria-label="Motorlane home"><span className="brand-icon">m</span>motorlane<span className="brand-dot">.</span></a>
@@ -41,12 +44,7 @@ function App() {
     <section className="form-side flex flex-col px-6 py-8 md:px-16 lg:px-12 xl:px-24">
       <div className="text-right text-xs text-stone-500">YOUR JOURNEY. YOUR WAY.</div>
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center py-14">
-        {session ? <div role="status">
-          <div className="welcome-mark mb-7">✓</div><p className="eyebrow text-stone-500 mb-3">YOU’RE ALL SET</p>
-          <h2 className="text-4xl tracking-tight mb-4">Welcome, {session.user.name}.</h2>
-          <p className="text-stone-500 leading-7">You’re signed in as <strong className="font-medium text-stone-700 break-all">{session.user.email}</strong>.</p>
-          <button className="submit mt-8" onClick={() => { setSession(null); switchMode('login'); }}>Sign out <span>↗</span></button>
-        </div> : <>
+        {<>
           <div className="tabs flex mb-10" aria-label="Account options">
             <button type="button" disabled={busy} aria-pressed={!registering} onClick={() => switchMode('login')}>Sign in</button>
             <button type="button" disabled={busy} aria-pressed={registering} onClick={() => switchMode('register')}>Create account</button>
@@ -58,7 +56,7 @@ function App() {
             <fieldset disabled={busy} className="space-y-5">
               {registering && <label className="field">Full name<input autoComplete="name" name="name" placeholder="Your full name" required maxLength={80} /></label>}
               <label className="field">Email address<input autoComplete="email" type="email" name="email" placeholder="you@example.com" required maxLength={254} /></label>
-              <label className="field">Password<div className="relative"><input className="pr-20" autoComplete={registering ? 'new-password' : 'current-password'} type={showPassword ? 'text' : 'password'} name="password" placeholder={registering ? 'Create a strong password' : 'Enter your password'} required minLength={registering ? 12 : 1} maxLength={128} aria-describedby={registering ? 'password-hint' : undefined} /><button type="button" className="password-toggle" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'Hide' : 'Show'}</button></div></label>
+              <label className="field">Password<div className="relative"><input className="pr-20" autoComplete={registering ? 'new-password' : 'current-password'} type={showPassword ? 'text' : 'password'} name="password" aria-label="Password" placeholder={registering ? 'Create a strong password' : 'Enter your password'} required minLength={registering ? 12 : 1} maxLength={128} aria-describedby={registering ? 'password-hint' : undefined} /><button type="button" className="password-toggle" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'Hide' : 'Show'}</button></div></label>
               {registering && <p id="password-hint" className="text-xs text-stone-500">Use 12–128 characters for your password.</p>}
               {error && <p role="alert" className="error">{error}</p>}
               <button className="submit" type="submit">{busy ? 'Please wait…' : registering ? 'Create account' : 'Sign in'}<span aria-hidden="true">↗</span></button>
