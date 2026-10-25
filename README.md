@@ -66,7 +66,7 @@ Every endpoint below requires `Authorization: Bearer <token>`. Responses use `{ 
 | POST | `/api/vehicles/:id/restock` | Admin | Increase stock |
 
 Create and update accept exactly these fields:
-
+ 
 ```json
 {
   "make": "Toyota",
