@@ -119,21 +119,37 @@ Requires Microsoft Edge and `TEST_DATABASE_URL` in `.env` or the environment. Th
 
 Captured from the running application with isolated test data; the screenshots do not expose personal accounts.
 
+### Login
+
+![Login page](screenshots/login_page.png)
+
 ### Customer showroom
 
-![Customer showroom](screenshots/customer-dashboard.png)
+![Customer showroom](screenshots/user_UI.png)
+
+![Expanded vehicle details](screenshots/expanded_view.png)
+
+### Search and collection controls
+
+![Search filter](screenshots/serach_filter.png)
+
+![In-stock filter](screenshots/in-stock-view.png)
+
+![Price low to high](screenshots/price_low-tohigh.png)
+
+![Price high to low](screenshots/price_high-to-low.png)
 
 ### Admin inventory
 
-![Admin inventory](screenshots/admin-dashboard.png)
+![Admin inventory](screenshots/admin.png)
 
-### Dark theme
+![Admin inventory view](screenshots/admin2.png)
 
-![Dark customer showroom](screenshots/customer-dark.png)
+![Admin inventory management](screenshots/admin3.png)
 
-### Mobile
+![Admin inventory controls](screenshots/admin4.png)
 
-<img src="screenshots/mobile-dashboard.png" alt="Mobile customer showroom" width="375" />
+![Additional customer showroom view](screenshots/User_UI_two.png)
 
 ## Contributors and AI assistance
 
