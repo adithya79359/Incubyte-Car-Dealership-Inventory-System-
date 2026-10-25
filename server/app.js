@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
+import { createVehicleRouter, initializeVehicles } from './vehicles.js';
 const scrypt = promisify(scryptCallback);
 
 export async function createApp({ db, secret }) {
@@ -11,6 +12,7 @@ export async function createApp({ db, secret }) {
       password_hash TEXT NOT NULL, salt TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'user'
     )`);
   const app = express();
+  await initializeVehicles(db);
   app.disable('x-powered-by');
   app.use(express.json({ limit: '8kb' }));
   app.use('/api', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
@@ -62,7 +64,7 @@ export async function createApp({ db, secret }) {
     if (!timingSafeEqual(hash, expected) || !user) return res.status(401).json({ message: 'Invalid email or password.' });
     return res.json(session(user));
   });
-  app.get('/api/auth/me', async (req, res) => {
+  async function authenticate(req, res, next) {
     let claims;
     try {
       const match = /^Bearer (\S+)$/.exec(req.headers.authorization || '');
@@ -74,8 +76,11 @@ export async function createApp({ db, secret }) {
     }
     const { rows: [user] } = await db.query('SELECT id, name, email, role FROM users WHERE id = $1', [claims.sub]);
     if (!user) return res.status(401).json({ message: 'Your session has expired. Please sign in again.' });
-    return res.json({ user: publicUser(user) });
-  });
+    req.user = publicUser(user);
+    next();
+  }
+  app.get('/api/auth/me', authenticate, (req, res) => res.json({ user: req.user }));
+  app.use('/api/vehicles', authenticate, createVehicleRouter(db));
   app.use('/api', (_req, res) => res.status(404).json({ message: 'Endpoint not found.' }));
   app.use((error, _req, res, _next) => {
     const status = error.status === 400 || error.status === 413 ? error.status : 500;
