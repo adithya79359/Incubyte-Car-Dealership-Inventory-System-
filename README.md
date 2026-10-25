@@ -121,35 +121,35 @@ Captured from the running application with isolated test data; the screenshots d
 
 ### Login page
 
-[![Login page](screenshots/login_page.png)](screenshots/login_page.png)
+[![Login page](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/login_page.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/login_page.png)
 
 ### Customer showroom
 
-[![Customer showroom](screenshots/user_UI.png)](screenshots/user_UI.png)
+[![Customer showroom](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/user_UI.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/user_UI.png)
 
-[![Additional customer showroom view](screenshots/User_UI_two.png)](screenshots/User_UI_two.png)
+[![Additional customer showroom view](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/User_UI_two.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/User_UI_two.png)
 
-[![Expanded vehicle details](screenshots/expanded_view.png)](screenshots/expanded_view.png)
+[![Expanded vehicle details](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/expanded_view.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/expanded_view.png)
 
 ### Search and collection controls
 
-[![Search filters](screenshots/serach_filter.png)](screenshots/serach_filter.png)
+[![Search filters](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/serach_filter.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/serach_filter.png)
 
-[![In-stock filter](screenshots/in-stock-view.png)](screenshots/in-stock-view.png)
+[![In-stock filter](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/in-stock-view.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/in-stock-view.png)
 
-[![Price sorted low to high](screenshots/price_low-tohigh.png)](screenshots/price_low-tohigh.png)
+[![Price sorted low to high](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/price_low-tohigh.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/price_low-tohigh.png)
 
-[![Price sorted high to low](screenshots/price_high-to-low.png)](screenshots/price_high-to-low.png)
+[![Price sorted high to low](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/price_high-to-low.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/price_high-to-low.png)
 
 ### Admin inventory
 
-[![Admin dashboard](screenshots/admin.png)](screenshots/admin.png)
+[![Admin dashboard](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/admin.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/admin.png)
 
-[![Admin inventory view](screenshots/admin2.png)](screenshots/admin2.png)
+[![Admin inventory view](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/admin2.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/admin2.png)
 
-[![Admin inventory management](screenshots/admin3.png)](screenshots/admin3.png)
+[![Admin inventory management](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/admin3.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/admin3.png)
 
-[![Admin inventory controls](screenshots/admin4.png)](screenshots/admin4.png)
+[![Admin inventory controls](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/admin4.png)](https://raw.githubusercontent.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-/main/screenshots/admin4.png)
 
 ## Contributors and AI assistance
 
