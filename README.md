@@ -1,5 +1,13 @@
 # Motorlane dealership API
 
+## Themes and vehicle photography
+
+Use the light/dark switch on the login page or dashboard. The first visit follows the device theme; a manual choice is remembered in this browser. Both modes retain the Motorlane forest-green palette.
+
+In **Manage inventory → Add vehicle / Edit**, enter an optional direct HTTPS image URL to display a vehicle photo. A preview appears before saving. Leaving the field empty, choosing **Remove image**, or an image failing to load displays the original Motorlane car illustration. No stock photos are assigned automatically. Images are loaded from their source with no referrer sent; use image links you have permission to display.
+
+The API accepts optional `imageUrl` on create and update and returns it as a URL or `null`. An update that omits `imageUrl` preserves the current image; an empty string or `null` clears it. Existing databases receive the nullable image column automatically on server startup. Image URLs must use HTTPS and must not contain credentials. Local file uploads are not included.
+
 Registration and login page with vehicle CRUD, search, and inventory APIs built with React, Tailwind CSS, Node.js, Express, and PostgreSQL. Requires Node.js 24 or newer and a running PostgreSQL server.
 
 ## Run locally

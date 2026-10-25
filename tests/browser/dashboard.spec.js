@@ -25,7 +25,7 @@ test('buyer searches, purchases the last unit, and signs out', async ({ page }) 
   await page.getByRole('button', { name: 'Purchase', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Confirm purchase', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('Purchase confirmed');
+  await expect(page.getByRole('status').filter({ hasText: 'Purchase confirmed' })).toBeVisible();
   await expect(page.getByRole('article').getByRole('button', { name: 'Out of stock' })).toBeDisabled();
   await page.getByLabel('Make', { exact: true }).fill('no-match');
   await page.getByRole('button', { name: 'Search', exact: true }).click();
@@ -96,4 +96,42 @@ test('registration enters dashboard and refresh clears the session', async ({ pa
   await expect(page.getByRole('heading', { name: 'A great drive starts here.' })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Welcome back.' })).toBeVisible();
+});
+
+test('theme persists and vehicle images can be added, replaced and removed', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await signIn(page, 'admin@example.com');
+  await expect(page.getByText('Welcome back,', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'Manage inventory' }).click();
+  // Deterministic image response keeps the test independent of external image hosts.
+  await page.route('https://images.example.com/car.png', route => route.fulfill({ contentType: 'image/png', body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aX2kAAAAASUVORK5CYII=', 'base64') }));
+  await page.route('https://images.example.com/broken.png', route => route.fulfill({ status: 404, body: '' }));
+  const card = page.getByRole('article', { name: 'Toyota Camry' });
+  await expect(card.getByText('Illustration')).toBeVisible();
+  await card.getByRole('button', { name: 'Edit', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Vehicle image URL (optional)').fill('https://images.example.com/car.png');
+  await dialog.getByRole('button', { name: 'Save changes' }).click();
+  await expect(card.getByRole('img')).toBeVisible();
+  expect(await card.getByRole('img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+  await card.getByRole('button', { name: 'Edit', exact: true }).click();
+  await expect(dialog.getByLabel('Vehicle image URL (optional)')).toHaveValue('https://images.example.com/car.png');
+  await dialog.getByLabel('Vehicle image URL (optional)').fill('https://images.example.com/broken.png');
+  await dialog.getByRole('button', { name: 'Save changes' }).click();
+  await expect(card.getByText('Illustration')).toBeVisible();
+  await card.getByRole('button', { name: 'Edit', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Remove image' }).click();
+  await dialog.getByRole('button', { name: 'Save changes' }).click();
+  await expect(card.getByText('Illustration')).toBeVisible();
+  await page.screenshot({ path: 'test-results/dark-dashboard.png', fullPage: true });
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: 'test-results/dark-mobile.png', fullPage: true });
+  await page.getByRole('button', { name: 'Switch to light mode' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 });
