@@ -7,7 +7,7 @@
     "dev": "concurrently -k \"node --env-file-if-exists=.env --watch server/index.js\" \"vite --host 127.0.0.1\"",
     "build": "vite build",
     "start": "node --env-file-if-exists=.env server/index.js",
-    "test": "node --env-file-if-exists=.env --test server/auth.test.js"
+    "test": "node --env-file-if-exists=.env --test server/*.test.js"
   },
   "dependencies": {
     "express": "^5.1.0",
