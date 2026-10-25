@@ -5,7 +5,7 @@ async function signIn(page, email = 'buyer@example.com') {
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password', { exact: true }).fill('Browser-test-password-123');
   await page.getByRole('button', { name: 'Sign in', exact: true }).last().click();
-  await expect(page.getByRole('heading', { name: 'A great drive starts here.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Find your next adventure.' })).toBeVisible();
   await expect(page.getByRole('article').first()).toBeVisible();
 }
 
@@ -93,7 +93,7 @@ test('registration enters dashboard and refresh clears the session', async ({ pa
   await page.getByLabel('Email address').fill('newdriver@example.com');
   await page.getByLabel('Password', { exact: true }).fill('Browser-test-password-123');
   await page.getByRole('button', { name: 'Create account', exact: true }).last().click();
-  await expect(page.getByRole('heading', { name: 'A great drive starts here.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Find your next adventure.' })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Welcome back.' })).toBeVisible();
 });
@@ -134,4 +134,27 @@ test('theme persists and vehicle images can be added, replaced and removed', asy
   await page.screenshot({ path: 'test-results/dark-mobile.png', fullPage: true });
   await page.getByRole('button', { name: 'Switch to light mode' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+});
+
+test('customer collection tabs, sorting, layout and details work', async ({ page }) => {
+  await signIn(page);
+  await expect(page.getByRole('link', { name: /Home|Browse Cars|My Garage|Compare/ })).toHaveCount(0);
+  await page.getByRole('button', { name: 'SUV (1)', exact: true }).click();
+  await expect(page.getByRole('article')).toHaveCount(1);
+  await expect(page.getByRole('article')).toHaveAttribute('aria-label', 'Honda CR-V');
+  await page.getByRole('button', { name: 'All (2)', exact: true }).click();
+  await page.getByLabel('Sort vehicles').selectOption('price-desc');
+  await expect(page.getByRole('article').first()).toHaveAttribute('aria-label', 'Honda CR-V');
+  await page.getByLabel('Sort vehicles').selectOption('price-asc');
+  await expect(page.getByRole('article').first()).toHaveAttribute('aria-label', 'Toyota Camry');
+  await page.getByRole('button', { name: 'List view', exact: true }).click();
+  await expect(page.getByRole('region', { name: 'Vehicles', exact: true })).toHaveClass(/showroom-list/);
+  await page.getByRole('article').first().getByRole('button', { name: 'View Details' }).click();
+  await expect(page.getByRole('dialog')).toContainText('Toyota');
+  await expect(page.getByRole('dialog')).toContainText('Sedan');
+  await page.getByRole('button', { name: 'Close details' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Grid view', exact: true }).click();
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+  await page.screenshot({ path: 'test-results/customer-dark.png', fullPage: true });
 });

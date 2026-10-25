@@ -21,7 +21,7 @@ function ActionDialog({ action, busy, error, close, confirm }) {
   const { kind, vehicle } = action;
   const [imageUrl, setImageUrl] = useState(vehicle?.imageUrl || '');
   const editing = kind === 'edit' || kind === 'add';
-  const title = { add: 'Add a vehicle', edit: 'Edit vehicle', purchase: 'Confirm purchase', restock: 'Restock vehicle', delete: 'Delete vehicle?' }[kind];
+  const title = { add: 'Add a vehicle', edit: 'Edit vehicle', purchase: 'Confirm purchase', restock: 'Restock vehicle', delete: 'Delete vehicle?', details: 'Vehicle details' }[kind];
   useEffect(() => {
     const dialog = ref.current;
     dialog.showModal();
@@ -39,7 +39,7 @@ function ActionDialog({ action, busy, error, close, confirm }) {
     {vehicle && <p className="text-stone-600 mb-5 break-words">{vehicle.make} {vehicle.model} · {money(vehicle.price)}</p>}
     {kind === 'delete' && <p className="mb-5 text-sm text-stone-600">This removes the vehicle from the inventory. This action cannot be undone.</p>}
     {kind === 'purchase' && <p className="mb-5 text-sm text-stone-600">Confirm to reduce available stock. No payment is collected here.</p>}
-    <form onSubmit={submit}>
+    {kind === 'details' ? <><div className="vehicle-art details-photo"><VehicleImage key={vehicle.imageUrl || 'default'} imageUrl={vehicle.imageUrl} make={vehicle.make} model={vehicle.model} /></div><dl className="vehicle-details"><div><dt>Make</dt><dd>{vehicle.make}</dd></div><div><dt>Model</dt><dd>{vehicle.model}</dd></div><div><dt>Category</dt><dd>{vehicle.category}</dd></div><div><dt>Price</dt><dd>{money(vehicle.price)}</dd></div><div><dt>Availability</dt><dd>{vehicle.quantity ? vehicle.quantity + ' in stock' : 'Out of stock'}</dd></div></dl><button className="secondary-button w-full" onClick={close}>Close details</button></> : <form onSubmit={submit}>
       <fieldset disabled={busy} className="space-y-4">
         {editing ? <>
           {['make', 'model', 'category'].map(field => <label key={field} className="field">{field[0].toUpperCase() + field.slice(1)}<input name={field} defaultValue={vehicle?.[field] || ''} required maxLength={100} pattern=".*\S.*" /></label>)}
@@ -49,13 +49,16 @@ function ActionDialog({ action, busy, error, close, confirm }) {
         {error && <p role="alert" className="error">{error}</p>}
         <div className="flex gap-3 pt-3"><button type="button" className="secondary-button flex-1" onClick={close}>Cancel</button><button className={`submit flex-1 ${kind === 'delete' ? 'danger-button' : ''}`} type="submit">{busy ? 'Saving…' : { add: 'Add vehicle', edit: 'Save changes', purchase: 'Confirm purchase', restock: 'Add stock', delete: 'Delete vehicle' }[kind]}</button></div>
       </fieldset>
-    </form>
+    </form>}
   </dialog>;
 }
 
 export default function Dashboard({ session, onSignOut }) {
   const admin = session.user.role === 'admin';
   const [manage, setManage] = useState(false);
+  const [categoryTab, setCategoryTab] = useState('');
+  const [sort, setSort] = useState('featured');
+  const [layout, setLayout] = useState('grid');
   const [filters, setFilters] = useState(blankFilters);
   const [query, setQuery] = useState('');
   const [vehicles, setVehicles] = useState([]);
@@ -86,7 +89,7 @@ export default function Dashboard({ session, onSignOut }) {
     if (filters.minPrice !== '' && filters.maxPrice !== '' && Number(filters.minPrice) > Number(filters.maxPrice)) {
       setError('Minimum price cannot exceed maximum price.'); return;
     }
-    setNotice('');
+    setNotice(''); setCategoryTab('');
     setQuery(new URLSearchParams(Object.entries(filters).filter(([, value]) => value.trim()).map(([key, value]) => [key, value.trim()])).toString());
     setRevision(value => value + 1);
   }
@@ -107,7 +110,10 @@ export default function Dashboard({ session, onSignOut }) {
     } finally { mutationLock.current = false; setBusy(false); }
   }
   const units = vehicles.reduce((sum, vehicle) => sum + vehicle.quantity, 0);
-  return <div className="dashboard min-h-screen">
+  const categories = [...new Set(vehicles.map(vehicle => vehicle.category))];
+  const visibleVehicles = vehicles.filter(vehicle => !categoryTab || vehicle.category === categoryTab).sort((a,b) => sort === 'price-asc' ? a.price-b.price : sort === 'price-desc' ? b.price-a.price : a.id-b.id);
+  const featuredVehicle = vehicles.find(vehicle => vehicle.imageUrl);
+  return <div className={`dashboard min-h-screen ${manage ? 'management-view' : 'showroom-view'}`}>
     <a href="#inventory" className="skip-link">Skip to vehicles</a>
     <header className="dashboard-header"><div className="dashboard-container flex flex-wrap items-center justify-between gap-4 py-5">
       <a href="#inventory" className="brand"><span className="brand-icon">m</span>motorlane<span className="brand-dot">.</span></a>
@@ -115,20 +121,20 @@ export default function Dashboard({ session, onSignOut }) {
     </div></header>
     <main className="dashboard-container py-8 md:py-12" id="inventory">
       <div className="welcome-row"><div><p className="eyebrow">YOUR MOTORLANE</p><p className="welcome-message">Welcome back, <strong>{session.user.name}</strong><span className="welcome-dot" aria-hidden="true">.</span></p></div><span className="welcome-caption">A little closer to your next adventure.</span></div>
-      <section className="dashboard-hero flex flex-wrap justify-between items-center gap-8 mb-8"><div><p className="eyebrow mb-4">{manage ? 'YOUR INVENTORY, AT A GLANCE' : 'FIND YOUR NEXT CHAPTER'}</p><h1 className="text-3xl md:text-5xl tracking-tight mb-4">{manage ? 'Keep your showroom moving.' : 'A great drive starts here.'}</h1><p className="text-sm md:text-base text-[#becdc3] max-w-xl">{manage ? 'Manage your collection, update vehicle details, and keep stock ready for the road.' : 'Explore the collection. Find your fit. Make your next move.'}</p></div><div className="hero-signature" aria-hidden="true"><span className="hero-emblem">↗</span><span>THE MOTORLANE COLLECTION</span></div></section>
+      {!manage ? <section className="showroom-hero" aria-labelledby="showroom-title"><div className="hero-vehicle"><VehicleImage key={featuredVehicle?.imageUrl || 'hero-default'} imageUrl={featuredVehicle?.imageUrl} make={featuredVehicle?.make || 'Motorlane'} model={featuredVehicle?.model || 'collection'} /></div><div className="hero-shade" /><div className="showroom-hero-copy"><p className="eyebrow">PREMIUM CARS. REAL EXPERIENCES.</p><h1 id="showroom-title">Find your<br />next adventure.</h1><p>Explore our collection of vehicles.<br />Your next chapter begins with the right drive.</p><a href="#collection" className="explore-button">Explore Collection <span aria-hidden="true">→</span></a><div className="hero-benefits"><span><b aria-hidden="true">◇</b><span>Clear choices<small>Price & stock upfront</small></span></span><span><b aria-hidden="true">↗</b><span>Your next drive<small>{vehicles.length} vehicles to explore</small></span></span><span><b aria-hidden="true">✓</b><span>Simple & secure<small>Purchase with confidence</small></span></span></div></div><div className="hero-caption">Drive<br /><strong>Your Dream</strong><i /></div></section> : <section className="dashboard-hero flex flex-wrap justify-between items-center gap-8 mb-8"><div><p className="eyebrow mb-4">{manage ? 'YOUR INVENTORY, AT A GLANCE' : 'FIND YOUR NEXT CHAPTER'}</p><h1 className="text-3xl md:text-5xl tracking-tight mb-4">{manage ? 'Keep your showroom moving.' : 'A great drive starts here.'}</h1><p className="text-sm md:text-base text-[#becdc3] max-w-xl">{manage ? 'Manage your collection, update vehicle details, and keep stock ready for the road.' : 'Explore the collection. Find your fit. Make your next move.'}</p></div><div className="hero-signature" aria-hidden="true"><span className="hero-emblem">↗</span><span>THE MOTORLANE COLLECTION</span></div></section>}
       {admin && <nav className="flex flex-wrap justify-between gap-4 mb-7" aria-label="Dashboard views"><div className="tabs flex mb-0 w-full sm:w-80"><button aria-pressed={!manage} onClick={() => setManage(false)}>Browse vehicles</button><button aria-pressed={manage} onClick={() => setManage(true)}>Manage inventory</button></div>{manage && <button className="submit w-auto" onClick={() => open('add')}>+ Add vehicle</button>}</nav>}
-      <section className="grid grid-cols-3 gap-3 md:gap-5 mb-8" aria-label="Current results summary">{[['Vehicles', vehicles.length], ['Units in stock', units], ['Out of stock', vehicles.filter(vehicle => !vehicle.quantity).length]].map(([label, value]) => <div className="stat" key={label}><p>{label}</p><strong>{loading ? '—' : value}</strong></div>)}</section>
-      <section className="filter-panel mb-8" aria-labelledby="filter-title"><div className="flex justify-between gap-4 mb-5"><h2 id="filter-title" className="font-semibold">Find the right vehicle</h2><button className="text-link text-xs" type="button" onClick={() => { setFilters(blankFilters); setQuery(''); setRevision(value => value + 1); setNotice(''); }}>Clear filters</button></div>
+      {manage && <section className="grid grid-cols-3 gap-3 md:gap-5 mb-8" aria-label="Current results summary">{[['Vehicles', vehicles.length], ['Units in stock', units], ['Out of stock', vehicles.filter(vehicle => !vehicle.quantity).length]].map(([label, value]) => <div className="stat" key={label}><p>{label}</p><strong>{loading ? '—' : value}</strong></div>)}</section>}
+      <section className="filter-panel mb-8" aria-labelledby="filter-title"><div className="flex justify-between gap-4 mb-5"><h2 id="filter-title" className="font-semibold">Find the right vehicle</h2><button className="text-link text-xs" type="button" onClick={() => { setFilters(blankFilters); setCategoryTab(''); setQuery(''); setRevision(value => value + 1); setNotice(''); }}>Clear filters</button></div>
         <form onSubmit={search} className="filter-grid">{Object.keys(blankFilters).map(key => <label key={key} className="field">{{ make: 'Make', model: 'Model', category: 'Category', minPrice: 'Min price (INR)', maxPrice: 'Max price (INR)' }[key]}<input type={key.includes('Price') ? 'number' : 'text'} min={key.includes('Price') ? '0' : undefined} max={key.includes('Price') ? '9999999999.99' : undefined} step={key.includes('Price') ? '0.01' : undefined} maxLength={100} placeholder={{ make: 'e.g. Toyota', model: 'e.g. Camry', category: 'e.g. Sedan', minPrice: 'No minimum', maxPrice: 'No maximum' }[key]} value={filters[key]} onChange={event => setFilters({ ...filters, [key]: event.target.value })} /></label>)}<button type="submit" className="submit self-end">Search <span aria-hidden="true">↗</span></button></form>
       </section>
       {notice && <p role="status" className="success mb-6">{notice}</p>}
       {error && <div role="alert" className="error mb-6 flex justify-between gap-4"><span>{error}</span><button className="text-link" onClick={() => setRevision(value => value + 1)}>Retry</button></div>}
-      <div className="flex justify-between items-center mb-5"><h2 className="text-xl font-medium">{manage ? 'Inventory' : 'The collection'}</h2><p className="text-xs text-stone-500">{loading ? 'Loading vehicles…' : `${vehicles.length} ${vehicles.length === 1 ? 'vehicle' : 'vehicles'}${query ? ' found' : ''}`}</p></div>
-      {loading ? <div className="empty-state" role="status">Loading your collection…</div> : !vehicles.length ? <div className="empty-state"><p className="text-2xl mb-3">{error ? 'Unable to load vehicles' : query ? 'No matches just yet.' : 'The showroom is getting ready.'}</p><p className="text-stone-500">{error ? 'Please retry when your connection is ready.' : query ? 'Try another make, category, or price range.' : manage ? 'Add your first vehicle to start managing inventory.' : 'Check back soon for available vehicles.'}</p>{manage && !query && !error && <button className="text-link mt-5" onClick={() => open('add')}>Add your first vehicle</button>}</div> : <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" aria-label="Vehicles">
-        {vehicles.map(vehicle => <article className="vehicle-card" key={vehicle.id} aria-label={`${vehicle.make} ${vehicle.model}`}>
+      <div className="collection-toolbar" id="collection"><div><h2>{manage ? 'Inventory' : 'Our Collection'}</h2><p>{loading ? 'Loading vehicles…' : 'Discover vehicles for your next chapter.'}</p></div>{!manage && <><div className="category-tabs" aria-label="Vehicle categories"><button aria-pressed={!categoryTab} onClick={() => setCategoryTab('')}>All ({vehicles.length})</button>{categories.map(category => <button key={category} aria-pressed={categoryTab === category} onClick={() => setCategoryTab(category)}>{category} ({vehicles.filter(vehicle => vehicle.category === category).length})</button>)}</div><div className="collection-controls"><select aria-label="Sort vehicles" value={sort} onChange={event => setSort(event.target.value)}><option value="featured">Featured</option><option value="price-asc">Price: Low to High</option><option value="price-desc">Price: High to Low</option></select><div className="layout-switch" aria-label="Collection layout"><button aria-label="Grid view" aria-pressed={layout === 'grid'} onClick={() => setLayout('grid')}>▦</button><button aria-label="List view" aria-pressed={layout === 'list'} onClick={() => setLayout('list')}>☷</button></div></div></>}</div>
+      {loading ? <div className="empty-state" role="status">Loading your collection…</div> : !visibleVehicles.length ? <div className="empty-state"><p className="text-2xl mb-3">{error ? 'Unable to load vehicles' : (query || categoryTab) ? 'No matches just yet.' : 'The showroom is getting ready.'}</p><p className="text-stone-500">{error ? 'Please retry when your connection is ready.' : (query || categoryTab) ? 'Try another make, category, or price range.' : manage ? 'Add your first vehicle to start managing inventory.' : 'Check back soon for available vehicles.'}</p>{manage && !query && !error && <button className="text-link mt-5" onClick={() => open('add')}>Add your first vehicle</button>}</div> : <section className={manage ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : `showroom-grid ${layout === "list" ? "showroom-list" : ""}`} aria-label="Vehicles">
+        {visibleVehicles.map(vehicle => <article className="vehicle-card" key={vehicle.id} aria-label={`${vehicle.make} ${vehicle.model}`}>
           <div className="vehicle-art"><span className="category-badge">{vehicle.category}</span><VehicleImage key={vehicle.imageUrl || "default"} imageUrl={vehicle.imageUrl} make={vehicle.make} model={vehicle.model} /></div>
-          <div className="p-6"><div className="flex justify-between items-start gap-3 mb-5"><div className="min-w-0"><p className="eyebrow text-stone-500 mb-2 break-words">{vehicle.make}</p><h3 className="text-2xl font-medium break-words">{vehicle.model}</h3></div><span className={`stock-badge ${vehicle.quantity ? '' : 'sold-out'}`}>{vehicle.quantity ? `${vehicle.quantity} in stock` : 'Out of stock'}</span></div><div className="vehicle-price"><span>VEHICLE PRICE</span><p>{money(vehicle.price)}</p></div>
-            {manage ? <><div className="flex gap-2"><button className="secondary-button flex-1" onClick={() => open('edit', vehicle)}>Edit</button><button className="submit flex-1" disabled={vehicle.quantity === 2147483647} onClick={() => open('restock', vehicle)}>Restock</button></div><button className="delete-link mt-4" onClick={() => open('delete', vehicle)}>Delete vehicle</button></> : <button className="submit" disabled={!vehicle.quantity} onClick={() => open('purchase', vehicle)}>{vehicle.quantity ? 'Purchase' : 'Out of stock'}<span aria-hidden="true">↗</span></button>}
+          <div className="p-6 vehicle-card-body"><div className="flex justify-between items-start gap-3 mb-5"><div className="min-w-0"><p className="eyebrow text-stone-500 mb-2 break-words">{vehicle.make}</p><h3 className="text-2xl font-medium break-words">{vehicle.model}</h3></div><span className={`stock-badge ${vehicle.quantity ? '' : 'sold-out'}`}>{vehicle.quantity ? `${vehicle.quantity} in stock` : 'Out of stock'}</span></div><div className="vehicle-price"><span>VEHICLE PRICE</span><p>{money(vehicle.price)}</p></div>
+            {manage ? <><div className="flex gap-2"><button className="secondary-button flex-1" onClick={() => open('edit', vehicle)}>Edit</button><button className="submit flex-1" disabled={vehicle.quantity === 2147483647} onClick={() => open('restock', vehicle)}>Restock</button></div><button className="delete-link mt-4" onClick={() => open('delete', vehicle)}>Delete vehicle</button></> : <div className="customer-card-actions"><button className="secondary-button" onClick={() => open('details', vehicle)}>View Details</button><button className="submit" disabled={!vehicle.quantity} onClick={() => open('purchase', vehicle)}>{vehicle.quantity ? 'Purchase' : 'Out of stock'}<span aria-hidden="true">↗</span></button></div>}
           </div>
         </article>)}
       </section>}
