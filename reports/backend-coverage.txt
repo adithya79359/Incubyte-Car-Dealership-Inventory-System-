@@ -1,0 +1,35 @@
+
+> dealership-auth@1.0.0 test:coverage
+> node --env-file-if-exists=.env --experimental-test-coverage --test-coverage-include=server/app.js --test-coverage-include=server/vehicles.js --test server/*.test.js
+
+✔ registration stores an account and issues a verifiable JWT (305.5384ms)
+✔ login normalizes email and rejects incorrect credentials (276.3969ms)
+✔ registration validates input and blocks duplicate normalized emails (246.3799ms)
+✔ protected profile rejects absent, forged, and expired tokens (237.2555ms)
+✔ concurrent registrations preserve the unique email constraint (211.7361ms)
+✔ vehicle CRUD persists values and enforces authentication and admin deletion (345.2896ms)
+✔ vehicle input rejects invalid fields, identifiers, and missing records (342.3848ms)
+✔ search combines case-insensitive literal text, category and inclusive price filters (347.4282ms)
+✔ purchase and restock validate quantities and protect admin operations (343.0447ms)
+✔ concurrent purchases never oversell and concurrent restocks do not lose updates (308.5875ms)
+✔ admin permissions reflect current database role (242.9291ms)
+✔ vehicle images are optional, validated, preserved and removable (283.2281ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2534.3452
+ℹ start of coverage report
+ℹ ---------------------------------------------------------------
+ℹ file         | line % | branch % | funcs % | uncovered lines
+ℹ ---------------------------------------------------------------
+ℹ server       |        |          |         | 
+ℹ  app.js      |  93.81 |    81.63 |   84.62 | 20-21 62-63 93-94
+ℹ  vehicles.js | 100.00 |    96.40 |  100.00 | 
+ℹ ---------------------------------------------------------------
+ℹ all files    |  97.32 |    91.88 |   94.12 | 
+ℹ ---------------------------------------------------------------
+ℹ end of coverage report

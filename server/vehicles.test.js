@@ -119,4 +119,8 @@ test('vehicle images are optional, validated, preserved and removable', async t 
     assert.equal((await request('PUT', `/${id}`, { ...car, imageUrl: invalid })).status, 400);
   }
   assert.equal((await request('PUT', `/${id}`, { ...car, imageUrl: '' })).body.vehicle.imageUrl, null);
+  assert.equal((await request('PUT', `/${id}`, { ...car, imageUrl: '/cars/toyota.jpg' })).body.vehicle.imageUrl, '/cars/toyota.jpg');
+  for (const invalid of ['/cars/../secret.png', '//example.com/photo.png', '/cars/photo.svg', '/other/photo.jpg']) {
+    assert.equal((await request('PUT', `/${id}`, { ...car, imageUrl: invalid })).status, 400);
+  }
 });

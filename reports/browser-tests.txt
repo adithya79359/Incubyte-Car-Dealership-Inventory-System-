@@ -1,0 +1,32 @@
+
+> dealership-auth@1.0.0 test:browser
+> npm run build && node --env-file-if-exists=.env node_modules/@playwright/test/cli.js test
+
+
+> dealership-auth@1.0.0 build
+> vite build
+
+vite v6.4.5 building for production...
+transforming...
+✓ 31 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.43 kB │ gzip:  0.30 kB
+dist/assets/index-Dw0Bl8dV.css   34.76 kB │ gzip:  8.49 kB
+dist/assets/index-Vjq6y792.js   249.97 kB │ gzip: 77.72 kB
+✓ built in 996ms
+[WebServer] (node:8616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:19072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\dashboard.spec.js:12:1 › buyer searches, purchases the last unit, and signs out (1.3s)
+  ok 2 tests\browser\dashboard.spec.js:43:1 › admin adds, edits, restocks and deletes a vehicle (1.6s)
+  ok 3 tests\browser\dashboard.spec.js:79:1 › mobile layout, retry and expired session handling (1.3s)
+  ok 4 tests\browser\dashboard.spec.js:96:1 › registration enters dashboard and refresh clears the session (881ms)
+  ok 5 tests\browser\dashboard.spec.js:108:1 › theme persists and vehicle images can be added, replaced and removed (2.3s)
+  ok 6 tests\browser\dashboard.spec.js:147:1 › customer collection tabs, sorting, layout and details work (1.5s)
+
+  6 passed (11.4s)

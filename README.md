@@ -1,12 +1,14 @@
-# Motorlane dealership API
+# Motorlane — Car Dealership Inventory System
+
+[Public repository](https://github.com/adithya79359/Incubyte-Car-Dealership-Inventory-System-) · [Test report](reports/TEST_REPORT.md) · [Supplied conversation](prompt.md)
 
 ## Themes and vehicle photography
 
 Use the light/dark switch on the login page or dashboard. The first visit follows the device theme; a manual choice is remembered in this browser. Both modes retain the Motorlane forest-green palette.
 
-In **Manage inventory → Add vehicle / Edit**, enter an optional direct HTTPS image URL to display a vehicle photo. A preview appears before saving. Leaving the field empty, choosing **Remove image**, or an image failing to load displays the original Motorlane car illustration. No stock photos are assigned automatically. Images are loaded from their source with no referrer sent; use image links you have permission to display.
+In **Manage inventory → Add vehicle / Edit**, enter an optional direct HTTPS image URL or a local `/cars/filename.jpg` path to display a vehicle photo. A preview appears before saving. Leaving the field empty, choosing **Remove image**, or an image failing to load displays the original Motorlane car illustration. No stock photos are assigned automatically. Images are loaded from their source with no referrer sent; use image links you have permission to display.
 
-The API accepts optional `imageUrl` on create and update and returns it as a URL or `null`. An update that omits `imageUrl` preserves the current image; an empty string or `null` clears it. Existing databases receive the nullable image column automatically on server startup. Image URLs must use HTTPS and must not contain credentials. Local file uploads are not included.
+The API accepts optional `imageUrl` on create and update and returns it as a URL or `null`. An update that omits `imageUrl` preserves the current image; an empty string or `null` clears it. Existing databases receive the nullable image column automatically on server startup. External image URLs must use HTTPS and must not contain credentials. For local photos, place JPG, JPEG, PNG, WebP, or AVIF files in `public/cars/`, enter their `/cars/filename.jpg` path, and rebuild. File-upload controls are not included. The editor warns when a link fails to load.
 
 Registration and login page with vehicle CRUD, search, and inventory APIs built with React, Tailwind CSS, Node.js, Express, and PostgreSQL. Requires Node.js 24 or newer and a running PostgreSQL server.
 
@@ -19,7 +21,7 @@ CREATE DATABASE motorlane;
 CREATE DATABASE motorlane_test;
 ```
 
-Copy `.env.example` to `.env` and set `DATABASE_URL` and `TEST_DATABASE_URL` with your PostgreSQL username and password. URL-encode special characters in credentials. The server creates its users table on startup.
+Copy `.env.example` to `.env` and set `DATABASE_URL` and `TEST_DATABASE_URL` with your PostgreSQL username and password. URL-encode special characters in credentials. The server creates its tables and adds the optional image column on startup. Use the port of your PostgreSQL installation; on this machine it is 5433.
 
 ```sh
 npm install
@@ -48,7 +50,7 @@ Accounts persist in PostgreSQL through the connection specified by `DATABASE_URL
 
 Tests require `TEST_DATABASE_URL` pointing to a dedicated PostgreSQL test database. Each test creates a uniquely named schema and drops only that schema afterward; the test user must have permission to create schemas. The suite exercises registration, login, duplicate emails, validation, and JWT protection against a real PostgreSQL database.
 
-Existing SQLite files are left untouched; their accounts are not automatically imported into PostgreSQL.
+
 
 ## Vehicle APIs (Phases 4–6)
 
@@ -65,8 +67,8 @@ Every endpoint below requires `Authorization: Bearer <token>`. Responses use `{ 
 | POST | `/api/vehicles/:id/purchase` | Signed in | Decrease stock |
 | POST | `/api/vehicles/:id/restock` | Admin | Increase stock |
 
-Create and update accept exactly these fields:
- 
+Create and update require these five fields; `imageUrl` is optional:
+
 ```json
 {
   "make": "Toyota",
@@ -93,11 +95,11 @@ Roles are read from PostgreSQL on every authenticated request, so role changes a
 
 ## Validation
 
-The 11 integration tests cover authentication, vehicle CRUD and validation, combined search filters, authorization, quantity validation, stock overflow, concurrent purchasing, concurrent restocking, and role changes. Run `npm test` with a configured PostgreSQL test database. The frontend production build is checked with `npm run build`.
+The 12 integration tests cover authentication, vehicle CRUD and validation, combined search filters, authorization, quantity validation, stock overflow, concurrent purchasing, concurrent restocking, and role changes. Run `npm test` with a configured PostgreSQL test database. The frontend production build is checked with `npm run build`.
 
 ## Frontend (Phases 7–10)
 
-After registration or login, users enter a responsive vehicle dashboard. Search by make, model, category, and price; clear filters to return to the collection. Cards show price in INR and current stock. Purchase opens a quantity confirmation, updates stock through the API, and refreshes results. Sold-out purchases are disabled. This inventory operation does not collect payment.
+After registration or login, users enter a responsive vehicle dashboard. Search by make, model, category, and price; use category tabs, price sorting, and the In stock only checkbox. Clear filters to return to the collection. Cards show price in INR and current stock. Purchase opens a quantity confirmation, updates stock through the API, and refreshes results. Sold-out purchases are disabled. This inventory operation does not collect payment.
 
 Administrators also see **Manage inventory**, with add, edit, restock, and delete controls. Deletion requires confirmation. Grant the administrator role using the SQL above, then sign in again to refresh the frontend role. Backend permissions are always checked against the database.
 
@@ -111,4 +113,24 @@ The server sends anti-framing, content-type, referrer, and browser-permission he
 npm run test:browser
 ```
 
-Requires Microsoft Edge and `TEST_DATABASE_URL` in `.env` or the environment. The suite builds the frontend, starts a production-mode test server on port 3101, and uses a separate randomly named PostgreSQL schema with test-only accounts. Four browser tests exercise registration, login, search, purchase, sold-out state, admin CRUD/restock, delete cancellation, mobile layouts, server security headers, network-error recovery, session expiry, and sign-out. Screenshots and failure traces are saved under ignored `test-results/`.
+Requires Microsoft Edge and `TEST_DATABASE_URL` in `.env` or the environment. The suite builds the frontend, starts a production-mode test server on port 3101, and uses a separate randomly named PostgreSQL schema with test-only accounts. Six browser tests exercise registration, login, search, purchase, sold-out state, admin CRUD/restock, delete cancellation, mobile layouts, server security headers, network-error recovery, session expiry, and sign-out. Screenshots and failure traces are saved under ignored `test-results/`.
+
+## Screenshots
+
+Captured from the running application with isolated test data; the screenshots do not expose personal accounts.
+
+### Customer showroom
+
+![Customer showroom](screenshots/customer-dashboard.png)
+
+### Admin inventory
+
+![Admin inventory](screenshots/admin-dashboard.png)
+
+### Dark theme
+
+![Dark customer showroom](screenshots/customer-dark.png)
+
+### Mobile
+
+<img src="screenshots/mobile-dashboard.png" alt="Mobile customer showroom" width="375" />

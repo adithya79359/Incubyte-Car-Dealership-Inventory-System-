@@ -215,3 +215,12 @@ html { scroll-behavior: smooth; }
 @media(max-width:760px) { .showroom-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .showroom-list { grid-template-columns: 1fr; } .showroom-hero-copy { padding: 28px; } .hero-benefits { gap: 14px; flex-wrap: wrap; } .hero-vehicle { left: 20%; opacity: .45; } .hero-shade { background: linear-gradient(90deg,#0b2b21ed,#0b2b2170); } }
 @media(max-width:480px) { .showroom-grid { grid-template-columns: 1fr; } .showroom-grid .vehicle-art { height: 200px; } .showroom-view .filter-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .showroom-hero h1 { font-size: 39px; } .showroom-hero-copy { padding: 25px 22px; } .hero-benefits > span { font-size: 9px; } .hero-benefits { gap: 12px; } .hero-benefits > span:last-child { display: none; } .showroom-list .vehicle-card { grid-template-columns: 1fr; } .showroom-grid .vehicle-card-body { padding: 16px; } .customer-card-actions button { font-size: 12px; } }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } }
+.stock-filter { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); white-space: nowrap; }
+.stock-filter input { accent-color: #397251; width: 15px; height: 15px; }
+.collection-controls { flex-wrap: wrap; }
+@media(hover:hover) and (prefers-reduced-motion:no-preference) {
+  .vehicle-card .vehicle-photo { transition: transform .4s ease; }
+  .vehicle-card:hover .vehicle-photo { transform: scale(1.04); }
+  .vehicle-card button { transition: transform .2s ease, background-color .2s ease; }
+  .vehicle-card button:not(:disabled):hover { transform: translateY(-2px); }
+}

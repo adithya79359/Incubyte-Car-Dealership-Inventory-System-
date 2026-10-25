@@ -27,6 +27,9 @@ function vehicleInput(body) {
   let image = null;
   if (body.imageUrl !== undefined && body.imageUrl !== null && body.imageUrl !== '') {
     if (typeof body.imageUrl !== 'string' || body.imageUrl.length > 2048) return null;
+    if (/^\/cars\/[a-zA-Z0-9_-]+\.(?:jpg|jpeg|png|webp|avif)$/i.test(body.imageUrl)) {
+      return [...text, body.price, body.quantity, body.imageUrl];
+    }
     try {
       const url = new URL(body.imageUrl.trim());
       if (url.protocol !== 'https:' || url.username || url.password) return null;

@@ -19,6 +19,11 @@ test('buyer searches, purchases the last unit, and signs out', async ({ page }) 
   expect(response.headers()['x-frame-options']).toBe('DENY');
   expect(response.headers()['content-security-policy']).toContain("script-src 'self'");
   await expect(page.getByRole('article', { name: 'Honda CR-V' }).getByRole('button', { name: 'Out of stock' })).toBeDisabled();
+  await page.getByLabel('In stock only').check();
+  await expect(page.getByRole('article')).toHaveCount(1);
+  await expect(page.getByRole('article')).toHaveAttribute('aria-label', 'Toyota Camry');
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  await expect(page.getByLabel('In stock only')).not.toBeChecked();
   await page.getByLabel('Make', { exact: true }).fill('toy');
   await page.getByRole('button', { name: 'Search', exact: true }).click();
   await expect(page.getByRole('article')).toHaveCount(1);
@@ -37,7 +42,9 @@ test('buyer searches, purchases the last unit, and signs out', async ({ page }) 
 
 test('admin adds, edits, restocks and deletes a vehicle', async ({ page }) => {
   await signIn(page, 'admin@example.com');
+  await page.getByLabel('In stock only').check();
   await page.getByRole('button', { name: 'Manage inventory' }).click();
+  await expect(page.getByRole('article')).toHaveCount(2);
   await page.getByRole('button', { name: '+ Add vehicle', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('Make', { exact: true }).fill('Mazda');
@@ -122,6 +129,7 @@ test('theme persists and vehicle images can be added, replaced and removed', asy
   await card.getByRole('button', { name: 'Edit', exact: true }).click();
   await expect(dialog.getByLabel('Vehicle image URL (optional)')).toHaveValue('https://images.example.com/car.png');
   await dialog.getByLabel('Vehicle image URL (optional)').fill('https://images.example.com/broken.png');
+  await expect(dialog.getByRole('alert')).toContainText('could not load as an image');
   await dialog.getByRole('button', { name: 'Save changes' }).click();
   await expect(card.getByText('Illustration')).toBeVisible();
   await card.getByRole('button', { name: 'Edit', exact: true }).click();
