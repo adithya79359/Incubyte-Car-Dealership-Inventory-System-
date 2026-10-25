@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 import Dashboard from './Dashboard';
+import { ThemeProvider, ThemeToggle } from './Theme';
 
 function App() {
   const [mode, setMode] = useState('login');
@@ -42,7 +43,7 @@ function App() {
       <div className="relative z-10 flex flex-wrap gap-5 text-xs story-copy"><span>✓ Thoughtfully selected</span><span>✓ Simply transparent</span><span>✓ Ready for the road</span></div>
     </section>
     <section className="form-side flex flex-col px-6 py-8 md:px-16 lg:px-12 xl:px-24">
-      <div className="text-right text-xs text-stone-500">YOUR JOURNEY. YOUR WAY.</div>
+      <div className="flex justify-end"><ThemeToggle /></div>
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center py-14">
         {<>
           <div className="tabs flex mb-10" aria-label="Account options">
@@ -70,4 +71,4 @@ function App() {
     </section>
   </main>;
 }
-createRoot(document.getElementById('root')).render(<App />);
+createRoot(document.getElementById('root')).render(<ThemeProvider><App /></ThemeProvider>);

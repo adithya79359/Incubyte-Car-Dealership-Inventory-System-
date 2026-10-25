@@ -41,7 +41,7 @@ test('vehicle CRUD persists values and enforces authentication and admin deletio
   const added = await request('POST', '', car, 'user');
   assert.equal(added.status, 201);
   const id = added.body.vehicle.id;
-  assert.deepEqual(added.body.vehicle, { id, ...car });
+  assert.deepEqual(added.body.vehicle, { id, ...car, imageUrl: null });
   assert.equal((await request('GET', `/${id}`)).body.vehicle.make, 'Toyota');
   assert.equal((await request('GET')).body.vehicles.length, 1);
   assert.equal((await request('PUT', `/${id}`, { ...car, model: 'Corolla' }, 'user')).body.vehicle.model, 'Corolla');
@@ -104,4 +104,19 @@ test('admin permissions reflect current database role', async t => {
   await db.query("UPDATE users SET role = 'user' WHERE role = 'admin'");
   assert.equal((await request('DELETE', `/${id}`)).status, 403);
   assert.equal((await request('POST', `/${id}/restock`, { quantity: 1 })).status, 403);
+});
+
+test('vehicle images are optional, validated, preserved and removable', async t => {
+  const { request } = await setup(t);
+  const imageUrl = 'https://example.com/car.jpg';
+  const created = await request('POST', '', { ...car, imageUrl });
+  assert.equal(created.status, 201);
+  const id = created.body.vehicle.id;
+  assert.equal(created.body.vehicle.imageUrl, imageUrl);
+  assert.equal((await request('GET', '/search')).body.vehicles[0].imageUrl, imageUrl);
+  assert.equal((await request('PUT', `/${id}`, car)).body.vehicle.imageUrl, imageUrl);
+  for (const invalid of ['javascript:alert(1)', 'http://example.com/car.jpg', 'https://user:secret@example.com/car.jpg', 'not a URL', 42]) {
+    assert.equal((await request('PUT', `/${id}`, { ...car, imageUrl: invalid })).status, 400);
+  }
+  assert.equal((await request('PUT', `/${id}`, { ...car, imageUrl: '' })).body.vehicle.imageUrl, null);
 });

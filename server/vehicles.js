@@ -2,8 +2,8 @@ import { Router } from 'express';
 
 const MAX_QUANTITY = 2147483647;
 const MAX_PRICE = 9999999999.99;
-const fields = ['make', 'model', 'category', 'price', 'quantity'];
-const serialize = vehicle => ({ ...vehicle, price: Number(vehicle.price) });
+const fields = ['make', 'model', 'category', 'price', 'quantity', 'imageUrl'];
+const serialize = ({ image_url, ...vehicle }) => ({ ...vehicle, price: Number(vehicle.price), imageUrl: image_url || null });
 const validPrice = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= MAX_PRICE && Math.abs(value * 100 - Math.round(value * 100)) < 0.0001;
 const validQuantity = value => Number.isInteger(value) && value >= 0 && value <= MAX_QUANTITY;
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -17,13 +17,24 @@ export async function initializeVehicles(db) {
     price NUMERIC(12,2) NOT NULL CHECK (price >= 0),
     quantity INTEGER NOT NULL CHECK (quantity >= 0)
   )`);
+  await db.query('ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS image_url VARCHAR(2048)');
 }
 
 function vehicleInput(body) {
   if (!isObject(body) || Object.keys(body).some(key => !fields.includes(key))) return null;
   const text = ['make', 'model', 'category'].map(key => typeof body[key] === 'string' ? body[key].trim() : '');
   if (text.some(value => !value || value.length > 100 || value.includes('\0')) || !validPrice(body.price) || !validQuantity(body.quantity)) return null;
-  return [...text, body.price, body.quantity];
+  let image = null;
+  if (body.imageUrl !== undefined && body.imageUrl !== null && body.imageUrl !== '') {
+    if (typeof body.imageUrl !== 'string' || body.imageUrl.length > 2048) return null;
+    try {
+      const url = new URL(body.imageUrl.trim());
+      if (url.protocol !== 'https:' || url.username || url.password) return null;
+      image = url.href;
+      if (image.length > 2048) return null;
+    } catch { return null; }
+  }
+  return [...text, body.price, body.quantity, image];
 }
 
 function adminOnly(req, res, next) {
@@ -73,13 +84,13 @@ export function createVehicleRouter(db) {
   router.post('/', async (req, res) => {
     const input = vehicleInput(req.body);
     if (!input) return res.status(400).json({ message: 'Provide make, model, category, a non-negative price with at most two decimals, and an integer quantity.' });
-    const { rows: [vehicle] } = await db.query('INSERT INTO vehicles (make, model, category, price, quantity) VALUES ($1,$2,$3,$4,$5) RETURNING *', input);
+    const { rows: [vehicle] } = await db.query('INSERT INTO vehicles (make, model, category, price, quantity, image_url) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *', input);
     res.status(201).location(`/api/vehicles/${vehicle.id}`).json({ vehicle: serialize(vehicle) });
   });
   router.put('/:id', async (req, res) => {
     const input = vehicleInput(req.body);
     if (!input) return res.status(400).json({ message: 'Provide all five vehicle fields with valid values.' });
-    const { rows: [vehicle] } = await db.query('UPDATE vehicles SET make=$1, model=$2, category=$3, price=$4, quantity=$5 WHERE id=$6 RETURNING *', [...input, req.params.id]);
+    const { rows: [vehicle] } = await db.query('UPDATE vehicles SET make=$1, model=$2, category=$3, price=$4, quantity=$5, image_url=CASE WHEN $8 THEN $6 ELSE image_url END WHERE id=$7 RETURNING *', [...input, req.params.id, Object.hasOwn(req.body, 'imageUrl')]);
     if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
     res.json({ vehicle: serialize(vehicle) });
   });
