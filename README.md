@@ -117,58 +117,39 @@ Requires Microsoft Edge and `TEST_DATABASE_URL` in `.env` or the environment. Th
 
 ## Screenshots
 
-Captured from the running application with isolated test data; the screenshots do not expose personal accounts. Select any image to open it at full size.
+Captured from the running application with isolated test data; the screenshots do not expose personal accounts. Select an image to open it at full size.
 
-<table>
-  <tr>
-    <th>Login page</th>
-    <th>Customer showroom</th>
-  </tr>
-  <tr>
-    <td align="center"><a href="screenshots/login_page.png"><img src="screenshots/login_page.png" alt="Login page" width="360"></a></td>
-    <td align="center"><a href="screenshots/user_UI.png"><img src="screenshots/user_UI.png" alt="Customer showroom" width="360"></a></td>
-  </tr>
-  <tr>
-    <th>Additional customer view</th>
-    <th>Expanded vehicle details</th>
-  </tr>
-  <tr>
-    <td align="center"><a href="screenshots/User_UI_two.png"><img src="screenshots/User_UI_two.png" alt="Additional customer showroom view" width="360"></a></td>
-    <td align="center"><a href="screenshots/expanded_view.png"><img src="screenshots/expanded_view.png" alt="Expanded vehicle details" width="360"></a></td>
-  </tr>
-  <tr>
-    <th>Search filters</th>
-    <th>In-stock filter</th>
-  </tr>
-  <tr>
-    <td align="center"><a href="screenshots/serach_filter.png"><img src="screenshots/serach_filter.png" alt="Search filters" width="360"></a></td>
-    <td align="center"><a href="screenshots/in-stock-view.png"><img src="screenshots/in-stock-view.png" alt="In-stock filter" width="360"></a></td>
-  </tr>
-  <tr>
-    <th>Price: low to high</th>
-    <th>Price: high to low</th>
-  </tr>
-  <tr>
-    <td align="center"><a href="screenshots/price_low-tohigh.png"><img src="screenshots/price_low-tohigh.png" alt="Price sorted low to high" width="360"></a></td>
-    <td align="center"><a href="screenshots/price_high-to-low.png"><img src="screenshots/price_high-to-low.png" alt="Price sorted high to low" width="360"></a></td>
-  </tr>
-  <tr>
-    <th>Admin dashboard</th>
-    <th>Admin inventory view</th>
-  </tr>
-  <tr>
-    <td align="center"><a href="screenshots/admin.png"><img src="screenshots/admin.png" alt="Admin dashboard" width="360"></a></td>
-    <td align="center"><a href="screenshots/admin2.png"><img src="screenshots/admin2.png" alt="Admin inventory view" width="360"></a></td>
-  </tr>
-  <tr>
-    <th>Admin inventory management</th>
-    <th>Admin inventory controls</th>
-  </tr>
-  <tr>
-    <td align="center"><a href="screenshots/admin3.png"><img src="screenshots/admin3.png" alt="Admin inventory management" width="360"></a></td>
-    <td align="center"><a href="screenshots/admin4.png"><img src="screenshots/admin4.png" alt="Admin inventory controls" width="360"></a></td>
-  </tr>
-</table>
+### Login page
+
+[![Login page](screenshots/login_page.png)](screenshots/login_page.png)
+
+### Customer showroom
+
+[![Customer showroom](screenshots/user_UI.png)](screenshots/user_UI.png)
+
+[![Additional customer showroom view](screenshots/User_UI_two.png)](screenshots/User_UI_two.png)
+
+[![Expanded vehicle details](screenshots/expanded_view.png)](screenshots/expanded_view.png)
+
+### Search and collection controls
+
+[![Search filters](screenshots/serach_filter.png)](screenshots/serach_filter.png)
+
+[![In-stock filter](screenshots/in-stock-view.png)](screenshots/in-stock-view.png)
+
+[![Price sorted low to high](screenshots/price_low-tohigh.png)](screenshots/price_low-tohigh.png)
+
+[![Price sorted high to low](screenshots/price_high-to-low.png)](screenshots/price_high-to-low.png)
+
+### Admin inventory
+
+[![Admin dashboard](screenshots/admin.png)](screenshots/admin.png)
+
+[![Admin inventory view](screenshots/admin2.png)](screenshots/admin2.png)
+
+[![Admin inventory management](screenshots/admin3.png)](screenshots/admin3.png)
+
+[![Admin inventory controls](screenshots/admin4.png)](screenshots/admin4.png)
 
 ## Contributors and AI assistance
 
