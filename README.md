@@ -134,3 +134,10 @@ Captured from the running application with isolated test data; the screenshots d
 ### Mobile
 
 <img src="screenshots/mobile-dashboard.png" alt="Mobile customer showroom" width="375" />
+
+## Contributors and AI assistance
+
+- [Gemini](https://gemini.google.com/) (Google)
+- [Claude](https://claude.ai/) (Anthropic)
+- [ChatGPT](https://chatgpt.com/) (OpenAI)
+- [**ai**Andrey Sitnik](https://github.com/ai)
